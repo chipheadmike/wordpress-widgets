@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Audible Currently Reading Widget
  * Description: A sidebar widget that shows the audiobook you're currently listening to on Audible — cover, title, series, and author(s) — pulled automatically from a pasted Audible product URL.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Mike Williams
  * License: GPL-2.0-or-later
  * Text Domain: audible-currently-reading
@@ -24,23 +24,51 @@ function audible_crw_fetch_book_data( $url ) {
 		return new WP_Error( 'acrw_invalid_url', __( 'That does not look like an Audible URL.', 'audible-currently-reading' ) );
 	}
 
-	$response = wp_remote_get(
-		$url,
-		array(
-			'timeout'    => 15,
-			'user-agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-			'headers'    => array(
-				'Accept-Language' => 'en-US,en;q=0.9',
-			),
-		)
+	$args = array(
+		'timeout'    => 15,
+		'user-agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+		'headers'    => array(
+			'Accept-Language' => 'en-US,en;q=0.9',
+		),
 	);
 
-	if ( is_wp_error( $response ) ) {
-		return $response;
+	// Audible's bot protection occasionally 503s a request that would otherwise
+	// succeed, so give it a couple of quick retries before giving up.
+	$retryable_codes = array( 429, 502, 503, 504 );
+	$max_attempts     = 3;
+	$response         = null;
+	$code             = 0;
+
+	for ( $attempt = 1; $attempt <= $max_attempts; $attempt++ ) {
+		$response = wp_remote_get( $url, $args );
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$code = wp_remote_retrieve_response_code( $response );
+
+		if ( 200 === $code || ! in_array( $code, $retryable_codes, true ) ) {
+			break;
+		}
+
+		if ( $attempt < $max_attempts ) {
+			usleep( 400000 * $attempt );
+		}
 	}
 
-	$code = wp_remote_retrieve_response_code( $response );
 	if ( 200 !== $code ) {
+		if ( in_array( $code, $retryable_codes, true ) ) {
+			return new WP_Error(
+				'acrw_http_error',
+				sprintf(
+					/* translators: %d: HTTP status code */
+					__( 'Audible blocked this request after %1$d tries (HTTP %2$d). This usually means Audible is rate-limiting or blocking requests from your web host\'s server, not a problem with the URL or your Audible login — it can be intermittent. Fill in the fields below manually as a reliable fallback.', 'audible-currently-reading' ),
+					$max_attempts,
+					$code
+				)
+			);
+		}
 		return new WP_Error(
 			'acrw_http_error',
 			sprintf(
@@ -299,7 +327,7 @@ function audible_crw_enqueue_styles() {
 		'audible-currently-reading',
 		plugins_url( 'assets/style.css', __FILE__ ),
 		array(),
-		'1.0.0'
+		'1.0.1'
 	);
 }
 add_action( 'wp_enqueue_scripts', 'audible_crw_enqueue_styles' );
