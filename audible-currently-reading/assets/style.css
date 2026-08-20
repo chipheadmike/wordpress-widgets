@@ -1,0 +1,58 @@
+.acrw-card {
+	display: flex;
+	gap: 12px;
+	align-items: flex-start;
+}
+
+.acrw-cover-link {
+	flex: 0 0 auto;
+	display: block;
+}
+
+.acrw-cover {
+	width: 90px;
+	height: auto;
+	border-radius: 4px;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+	display: block;
+}
+
+.acrw-details {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.acrw-label {
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	opacity: 0.65;
+	margin-bottom: 4px;
+}
+
+.acrw-title {
+	font-weight: 600;
+	line-height: 1.3;
+	margin-bottom: 2px;
+}
+
+.acrw-title a {
+	text-decoration: none;
+	color: inherit;
+}
+
+.acrw-title a:hover {
+	text-decoration: underline;
+}
+
+.acrw-series {
+	font-size: 0.85em;
+	opacity: 0.75;
+	margin-bottom: 2px;
+}
+
+.acrw-author {
+	font-size: 0.85em;
+	opacity: 0.75;
+}
