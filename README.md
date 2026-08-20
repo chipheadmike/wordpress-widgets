@@ -39,3 +39,21 @@ looked-up Book Title field after saving; if it's wrong, either narrow the
 search terms and re-run it, or just type the correct details into the
 manual fields directly. Series is not returned by this API at all — enter
 it by hand if you want it shown.
+
+### [Local Weather](local-weather/)
+
+A sidebar widget showing current conditions — temperature, condition icon,
+"feels like", and location — for a place you type into the widget settings.
+Powered by [Open-Meteo](https://open-meteo.com/), a free, keyless weather
+and geocoding API.
+
+Install: copy the `local-weather` folder into `wp-content/plugins/`, activate
+**Local Weather Widget**, and add it from Appearance → Widgets.
+
+Type a location (e.g. `Portland, OR` — include a state/country if the city
+name is common) and it's geocoded to coordinates on save, same pattern as the
+Audible widget's title search. Unlike a book cover, weather actually needs to
+stay current, so the frontend fetches live conditions on a 15-minute cache
+(`get_transient`/`set_transient`) rather than only refreshing when you edit
+the widget. If a live fetch ever fails, it falls back to the last
+successfully-fetched reading rather than showing nothing.

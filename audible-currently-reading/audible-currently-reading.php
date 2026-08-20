@@ -60,7 +60,7 @@ function audible_crw_lookup_book_data( $title, $author ) {
 function audible_crw_itunes_search( $term, $media, $entity ) {
 	$url = add_query_arg(
 		array(
-			'term'   => rawurlencode( $term ),
+			'term'   => $term,
 			'media'  => $media,
 			'entity' => $entity,
 			'limit'  => 1,
