@@ -161,6 +161,10 @@ class Audible_Currently_Reading_Widget extends WP_Widget {
 
 		echo '<div class="acrw-card">';
 
+		if ( ! empty( $label ) ) {
+			echo '<div class="acrw-label">' . esc_html( $label ) . '</div>';
+		}
+
 		if ( ! empty( $cover_url ) ) {
 			if ( ! empty( $book_url ) ) {
 				echo '<a class="acrw-cover-link" href="' . esc_url( $book_url ) . '" target="_blank" rel="noopener noreferrer">';
@@ -169,12 +173,6 @@ class Audible_Currently_Reading_Widget extends WP_Widget {
 			if ( ! empty( $book_url ) ) {
 				echo '</a>';
 			}
-		}
-
-		echo '<div class="acrw-details">';
-
-		if ( ! empty( $label ) ) {
-			echo '<div class="acrw-label">' . esc_html( $label ) . '</div>';
 		}
 
 		if ( ! empty( $book_title ) ) {
@@ -188,21 +186,20 @@ class Audible_Currently_Reading_Widget extends WP_Widget {
 		}
 
 		if ( ! empty( $series ) ) {
-			echo '<div class="acrw-series">' . esc_html( $series ) . '</div>';
+			echo '<div class="acrw-series"><strong>' . esc_html__( 'Series:', 'audible-currently-reading' ) . '</strong> ' . esc_html( $series ) . '</div>';
 		}
 
 		if ( ! empty( $author ) ) {
-			echo '<div class="acrw-author">' . esc_html__( 'by', 'audible-currently-reading' ) . ' ' . esc_html( $author ) . '</div>';
+			echo '<div class="acrw-author"><strong>' . esc_html__( 'Author:', 'audible-currently-reading' ) . '</strong> ' . esc_html( $author ) . '</div>';
 		}
 
-		echo '</div>'; // .acrw-details
 		echo '</div>'; // .acrw-card
 
 		echo $args['after_widget']; // phpcs:ignore WordPress.Security.EscapeOutput
 	}
 
 	public function form( $instance ) {
-		$title       = ! empty( $instance['title'] ) ? $instance['title'] : __( "What I'm Listening To", 'audible-currently-reading' );
+		$title       = ! empty( $instance['title'] ) ? $instance['title'] : '';
 		$label       = ! empty( $instance['label'] ) ? $instance['label'] : __( 'Currently Reading', 'audible-currently-reading' );
 		$book_url    = ! empty( $instance['book_url'] ) ? $instance['book_url'] : '';
 		$book_title  = ! empty( $instance['book_title'] ) ? $instance['book_title'] : '';
@@ -216,7 +213,7 @@ class Audible_Currently_Reading_Widget extends WP_Widget {
 			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
 		</p>
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'label' ) ); ?>"><?php esc_html_e( 'Badge Label:', 'audible-currently-reading' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'label' ) ); ?>"><?php esc_html_e( 'Heading:', 'audible-currently-reading' ); ?></label>
 			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'label' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'label' ) ); ?>" type="text" value="<?php echo esc_attr( $label ); ?>">
 		</p>
 		<p>
